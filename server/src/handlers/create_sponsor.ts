@@ -1,16 +1,24 @@
+import { db } from '../db';
+import { sponsorsTable } from '../db/schema';
 import { type CreateSponsorInput, type Sponsor } from '../schema';
 
-export async function createSponsor(input: CreateSponsorInput): Promise<Sponsor> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is creating a new sponsor profile and persisting it in the database.
-  return Promise.resolve({
-    id: 0, // Placeholder ID
-    company_name: input.company_name,
-    contact_email: input.contact_email,
-    contact_phone: input.contact_phone || null,
-    industry: input.industry,
-    description: input.description || null,
-    created_at: new Date(),
-    updated_at: new Date()
-  } as Sponsor);
-}
+export const createSponsor = async (input: CreateSponsorInput): Promise<Sponsor> => {
+  try {
+    // Insert sponsor record
+    const result = await db.insert(sponsorsTable)
+      .values({
+        company_name: input.company_name,
+        contact_email: input.contact_email,
+        contact_phone: input.contact_phone || null,
+        industry: input.industry,
+        description: input.description || null
+      })
+      .returning()
+      .execute();
+
+    return result[0];
+  } catch (error) {
+    console.error('Sponsor creation failed:', error);
+    throw error;
+  }
+};

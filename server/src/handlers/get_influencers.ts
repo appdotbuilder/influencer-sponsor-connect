@@ -1,7 +1,18 @@
+import { db } from '../db';
+import { influencersTable } from '../db/schema';
 import { type Influencer } from '../schema';
 
-export async function getInfluencers(): Promise<Influencer[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is fetching all influencers from the database with their related data.
-  return [];
-}
+export const getInfluencers = async (): Promise<Influencer[]> => {
+  try {
+    // Fetch all influencers from database
+    const results = await db.select()
+      .from(influencersTable)
+      .execute();
+
+    // Return influencers with proper type conversion
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch influencers:', error);
+    throw error;
+  }
+};
